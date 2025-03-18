@@ -1,0 +1,197 @@
+  <!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paymeny PromptPay Wallet</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://fastly.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+        import promptpayQr from 'https://fastly.jsdelivr.net/npm/promptpay-qr@0.5.0/+esm'
+        window.promptpayQr = promptpayQr
+    </script>
+    <style>
+        body {
+            background: linear-gradient(135deg, #000000, #ff8000, #ffffff);
+            color: black;
+            font-family: 'Arial', sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+        .container {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            width: 350px;
+            text-align: center;
+            box-shadow: 0px 0px 15px rgba(255, 128, 0, 0.5);
+        }
+        .qr-box {
+            border: 2px solid #ff8000;
+            border-radius: 10px;
+            padding: 10px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        #promptpay-qr-img {
+            width: 100%;
+            max-width: 250px;
+            margin-top: 10px;
+        }
+        .footer {
+            background: #ff8000;
+            color: white;
+            border-radius: 5px;
+            padding: 10px;
+            margin-top: 10px;
+            text-align: left;
+        }
+        .input-amount {
+            width: 100%;
+            border: 2px solid #ff0000;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 16px;
+            text-align: center;
+            transition: all 0.3s ease-in-out;
+        }
+        .input-amount:focus {
+            border-color: #ff8000;
+            outline: none;
+            box-shadow: 0 0 10px rgba(255, 128, 0, 0.5);
+        }
+
+        /* Custom SweetAlert2 CSS */
+        .swal2-popup {
+            width: 300px; /* ปรับความกว้างของ SweetAlert2 */
+            border-radius: 20px; /* ปรับขอบโค้ง */
+            background: #ffa500; /* ธีมสีส้มเหลือง */
+            color: #000000; /* สีข้อความ */
+        }
+        .swal2-confirm {
+            padding: 8px 20px; /* ปรับขนาด padding ของปุ่ม */
+            font-size: 14px; /* ปรับขนาดฟอนต์ */
+            border-radius: 10px; /* ปรับมุมโค้งของปุ่ม */
+            height: auto; /* ปรับความสูงของปุ่ม */
+            line-height: 1.5; /* ปรับระยะห่างของข้อความในปุ่ม */
+            background-color: #ff4500; /* สีแดงส้ม */
+            border: none; /* ลบเส้นขอบ */
+            color: white; /* สีข้อความปุ่ม */
+        }
+        .swal2-confirm:hover {
+            background-color: #ff6347; /* สีแดงส้มเมื่อ hover */
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <img src="https://www.truemoney.com/wp-content/uploads/2020/12/truemoneywallet-logo-20190424.png" alt="PAPER WORK PromptPay" width="230">
+    <br><br>
+    <h5 class="text-dark">แลกเงินด้วย QR WALLET</h5>
+    
+    <input type="number" id="amount" class="input-amount my-2" placeholder="กรุณาระบุจำนวนเงิน" min="0">
+    
+    <div class="qr-box">
+        <img id="promptpay-qr-img" src="" alt="PAPER WORK PromptPay">
+    </div>
+
+    <button class="btn btn-warning w-100 mt-3" id="alert-save">📢 ขั้นตอนการใช้งาน</button>
+
+    <div class="footer">
+        <small>ชื่อบัญชี : นรินทร์ภัทร มีชัย</small><br>
+        <small>หมายเลขทรูมันนี่วอลเล็ต : 140xxxx299</small><br>
+        <small id="fee">ค่าธรรมเนียม: 5.00 บาท</small><br>
+        <small id="total">ยอดที่ต้องชำระ: 0.00 บาท</small>
+    </div>
+</div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script>
+    $(document).ready(() => {
+        let phoneNumber = "140000621803299"; 
+
+        // สร้าง QR Code ทันทีเมื่อโหลดหน้า (ไม่มีจำนวนเงิน)
+        updateQRCode();
+
+        $('#amount').on('input', () => {
+            let amount = $('#amount').val() ? Number($('#amount').val()) : 0;
+            let fee = 5;  // ค่าธรรมเนียมคงที่ 5บาท
+            let total = amount + fee;
+
+            // การแสดงค่าธรรมเนียมและยอดรวมพร้อมการจัดรูปแบบตัวเลข
+            $('#fee').text(`ค่าธรรมเนียม: ${fee.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`);
+            $('#total').text(`ยอดที่ต้องชำระ: ${total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`);
+            
+            updateQRCode(total);
+        });
+
+        function updateQRCode(amount) {
+            // กำหนด options หากมีการระบุจำนวนเงิน (amount > 0)
+            let options = {};
+            if (amount && amount > 0) {
+                options.amount = amount;
+            }
+            // สร้างข้อมูลสำหรับ QR Code ด้วย promptpayQr
+            let qrData = promptpayQr(phoneNumber, options);
+            let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${qrData}&size=500x500&margin=5`;
+            $('#promptpay-qr-img').attr('src', qrUrl);
+        }
+
+        // เมื่อคลิกปุ่ม จะเปิด SweetAlert2
+        $('#alert-save').click(function() {
+            Swal.fire({
+                title: 'ขั้นตอนการใช้งาน',
+                text: 'กรอกจำนวนเงิน แคปภาพหน้าจอ  เพื่อทำการบันทึก',
+                icon: 'info',
+                confirmButtonText: 'ตกลง',
+                confirmButtonColor: '#ff4500', // สีแดงส้ม
+                background: '#ffa500', // ธีมสีส้มเหลือง
+                color: '#000000', // สีข้อความ
+                showClass: {
+                    popup: 'animate__animated animate__fadeIn'
+                },
+                hideClass: {
+                    popup: 'animate__animated animate__fadeOut'
+                },
+                customClass: {
+                    popup: 'swal2-popup', // ใช้คลาสที่เราปรับแต่ง
+                    confirmButton: 'swal2-confirm' // ใช้คลาสที่เราปรับแต่งสำหรับปุ่ม
+                }
+            });
+        });
+
+        // ป้องกันการคลิกขวา
+        $(document).on("contextmenu", function(e) {
+            Swal.fire({
+                title: 'ERROR',
+                text: ' การคัดลอกหรือการคลิกขวาถูกปิดใช้งาน',
+                icon: 'error',
+                confirmButtonColor: '#ff4500', // สีแดงส้ม
+                background: '#ffa500', // ธีมสีส้มเหลือง
+                color: '#000000' // สีข้อความ
+            });
+            return false;
+        });
+
+        // ป้องกันการคัดลอก
+        $(document).on("copy", function(e) {
+            Swal.fire({
+                title: 'ERROR',
+                text: 'การคัดลอกหรือการคลิกขวาถูกปิดใช้งาน',
+                icon: 'error',
+                confirmButtonColor: '#ff4500', // สีแดงส้ม
+                background: '#ffa500', // ธีมสีส้มเหลือง
+                color: '#000000' // สีข้อความ
+            });
+            return false;
+        });
+    });
+</script>
+
+</body>
+</html>
