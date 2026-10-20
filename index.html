@@ -1,197 +1,437 @@
-  <!DOCTYPE html>
-<html lang="th">
+<!DOCTYPE html>
+<html lang="th" data-type="google" data-template="default">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Paymeny PromptPay Wallet</title>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
-    <script src="https://fastly.jsdelivr.net/npm/sweetalert2@11"></script>
-    <script type="module">
-        import promptpayQr from 'https://fastly.jsdelivr.net/npm/promptpay-qr@0.5.0/+esm'
-        window.promptpayQr = promptpayQr
-    </script>
-    <style>
-        body {
-            background: linear-gradient(135deg, #000000, #ff8000, #ffffff);
-            color: black;
-            font-family: 'Arial', sans-serif;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-        }
-        .container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            width: 350px;
-            text-align: center;
-            box-shadow: 0px 0px 15px rgba(255, 128, 0, 0.5);
-        }
-        .qr-box {
-            border: 2px solid #ff8000;
-            border-radius: 10px;
-            padding: 10px;
-            background: white;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-        }
-        #promptpay-qr-img {
-            width: 100%;
-            max-width: 250px;
-            margin-top: 10px;
-        }
-        .footer {
-            background: #ff8000;
-            color: white;
-            border-radius: 5px;
-            padding: 10px;
-            margin-top: 10px;
-            text-align: left;
-        }
-        .input-amount {
-            width: 100%;
-            border: 2px solid #ff0000;
-            border-radius: 8px;
-            padding: 8px;
-            font-size: 16px;
-            text-align: center;
-            transition: all 0.3s ease-in-out;
-        }
-        .input-amount:focus {
-            border-color: #ff8000;
-            outline: none;
-            box-shadow: 0 0 10px rgba(255, 128, 0, 0.5);
-        }
+  <meta charset="UTF-8" />
+  <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>yahaterm.shop - Web App Store</title>
+  <meta name="host" content="www.yahaterm.shop" />
+  <meta name="time" content="Wed, 21 Oct 2026 05:14:00 GMT" />
+  <meta name="user" content="yahaterm_user_01" />
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  
+  <!-- Google Fonts - Inter -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-        /* Custom SweetAlert2 CSS */
-        .swal2-popup {
-            width: 300px; /* ปรับความกว้างของ SweetAlert2 */
-            border-radius: 20px; /* ปรับขอบโค้ง */
-            background: #ffa500; /* ธีมสีส้มเหลือง */
-            color: #000000; /* สีข้อความ */
-        }
-        .swal2-confirm {
-            padding: 8px 20px; /* ปรับขนาด padding ของปุ่ม */
-            font-size: 14px; /* ปรับขนาดฟอนต์ */
-            border-radius: 10px; /* ปรับมุมโค้งของปุ่ม */
-            height: auto; /* ปรับความสูงของปุ่ม */
-            line-height: 1.5; /* ปรับระยะห่างของข้อความในปุ่ม */
-            background-color: #ff4500; /* สีแดงส้ม */
-            border: none; /* ลบเส้นขอบ */
-            color: white; /* สีข้อความปุ่ม */
-        }
-        .swal2-confirm:hover {
-            background-color: #ff6347; /* สีแดงส้มเมื่อ hover */
-        }
-    </style>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      background-color: #ffffff;
+      color: #202124;
+      user-select: none;
+    }
+    
+    /* Custom Scrollbar for screenshots */
+    .no-scrollbar::-webkit-scrollbar {
+      display: none;
+    }
+    .no-scrollbar {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    /* Shimmer Effect for Loading / Highlights */
+    .shiny-btn {
+      position: relative;
+      overflow: hidden;
+    }
+    .shiny-btn::after {
+      content: '';
+      position: absolute;
+      top: -50%;
+      left: -50%;
+      width: 200%;
+      height: 200%;
+      background: linear-gradient(
+        60deg,
+        rgba(255, 255, 255, 0) 20%,
+        rgba(255, 255, 255, 0.25) 50%,
+        rgba(255, 255, 255, 0) 80%
+      );
+      transform: rotate(30deg);
+      animation: shine 3s infinite;
+    }
+
+    @keyframes shine {
+      0% { transform: translateX(-100%) rotate(30deg); }
+      100% { transform: translateX(100%) rotate(30deg); }
+    }
+
+    .rotate-spinner {
+      animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+      100% { transform: rotate(360deg); }
+    }
+  </style>
+
+  <script type="text/javascript">
+    // App configuration parameters updated to www.yahaterm.shop
+    const appId = "yahaterm_app";
+    const targetDomain = "https://www.yahaterm.shop";
+    const playLink = targetDomain;
+
+    // Detect PWA / Standalone redirect
+    (function() {
+      const ua = navigator.userAgent || navigator.vendor || window.opera;
+      const isIOS = /iPad|iPhone|iPod/.test(ua);
+      const isStandalone = (window.navigator.standalone === true) || (window.matchMedia && window.matchMedia('(display-mode: standalone)').matches);
+      
+      if (isStandalone) {
+        window.location.href = targetDomain;
+      }
+    })();
+  </script>
 </head>
-<body>
+<body class="pb-20 max-w-md mx-auto min-h-screen border-x border-gray-100 shadow-xl relative">
 
-<div class="container">
-    <img src="https://www.truemoney.com/wp-content/uploads/2020/12/truemoneywallet-logo-20190424.png" alt="PAPER WORK PromptPay" width="230">
-    <br><br>
-    <h5 class="text-dark">แลกเงินด้วย QR WALLET</h5>
-    
-    <input type="number" id="amount" class="input-amount my-2" placeholder="กรุณาระบุจำนวนเงิน" min="0">
-    
-    <div class="qr-box">
-        <img id="promptpay-qr-img" src="" alt="PAPER WORK PromptPay">
+  <!-- ==================== HEADER ==================== -->
+  <header class="sticky top-0 bg-white z-30 px-4 py-3 flex items-center justify-between border-b border-gray-100 shadow-sm">
+    <div class="flex items-center space-x-2">
+      <!-- Google Play Logo Icon -->
+      <svg class="w-8 h-8" viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
+        <path fill="none" d="M0,0h40v40H0V0z"></path>
+        <g>
+          <path d="M19.7,19.2L4.3,35.3c0,0,0,0,0,0c0.5,1.7,2.1,3,4,3c0.8,0,1.5-0.2,2.1-0.6l0,0l17.4-9.9L19.7,19.2z" fill="#EA4335"></path>
+          <path d="M35.3,16.4L35.3,16.4l-7.5-4.3l-8.4,7.4l8.5,8.3l7.5-4.2c1.3-0.7,2.2-2.1,2.2-3.6C37.5,18.5,36.6,17.1,35.3,16.4z" fill="#FBBC04"></path>
+          <path d="M4.3,4.7C4.2,5,4.2,5.4,4.2,5.8v28.5c0,0.4,0,0.7,0.1,1.1l16-15.7L4.3,4.7z" fill="#4285F4"></path>
+          <path d="M19.8,20l8-7.9L10.5,2.3C9.9,1.9,9.1,1.7,8.3,1.7c-1.9,0-3.6,1.3-4,3c0,0,0,0,0,0L19.8,20z" fill="#34A853"></path>
+        </g>
+      </svg>
+      <h1 class="text-xl font-medium text-gray-700 tracking-tight">Google Play</h1>
     </div>
 
-    <button class="btn btn-warning w-100 mt-3" id="alert-save">📢 ขั้นตอนการใช้งาน</button>
-
-    <div class="footer">
-        <small>ชื่อบัญชี : นรินทร์ภัทร มีชัย</small><br>
-        <small>หมายเลขทรูมันนี่วอลเล็ต : 140xxxx299</small><br>
-        <small id="fee">ค่าธรรมเนียม: 5.00 บาท</small><br>
-        <small id="total">ยอดที่ต้องชำระ: 0.00 บาท</small>
+    <div class="flex items-center space-x-4">
+      <!-- Search Icon -->
+      <button aria-label="Search" class="p-1 text-gray-600 hover:text-black">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 0 0114 0z"></path>
+        </svg>
+      </button>
+      <!-- Help Icon -->
+      <button aria-label="Help" class="p-1 text-gray-600 hover:text-black">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+        </svg>
+      </button>
+      <!-- User Avatar -->
+      <div class="w-8 h-8 rounded-full bg-emerald-600 text-white font-semibold flex items-center justify-center text-sm">
+        Y
+      </div>
     </div>
-</div>
+  </header>
 
-<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-<script>
-    $(document).ready(() => {
-        let phoneNumber = "1234567890123"; 
+  <!-- ==================== MAIN CONTENT ==================== -->
+  <main class="px-5 pt-4">
+    <!-- App Header Info -->
+    <div class="flex items-start space-x-4 mb-5">
+      <!-- App Logo (Yahaterm Shop Custom Brand Logo) -->
+      <div class="w-20 h-20 rounded-2xl overflow-hidden shadow-md flex-shrink-0 border border-gray-100 bg-emerald-500 flex items-center justify-center text-white font-bold text-2xl">
+        <img 
+          src="https://placehold.co/160x160/01875f/ffffff?text=YAHATERM" 
+          alt="yahaterm.shop logo" 
+          class="w-full h-full object-cover"
+          onerror="this.onerror=null; this.src='https://placehold.co/160x160/01875f/ffffff?text=YAHATERM';"
+        />
+      </div>
+      
+      <!-- Titles -->
+      <div class="flex-1">
+        <h1 class="text-2xl font-bold text-gray-900 leading-tight">YAHATERM.SHOP</h1>
+        <p class="text-emerald-700 font-semibold text-sm mt-0.5">www.yahaterm.shop</p>
+        <p class="text-xs text-gray-500 mt-1 flex items-center">
+          <svg class="w-3.5 h-3.5 text-emerald-600 mr-1" fill="currentColor" viewBox="0 0 20 20">
+            <path fill-rule="evenodd" d="M6.267 3.455a3.066 3.066 0 001.745-.723 3.066 3.066 0 013.976 0 3.066 3.066 0 001.745.723 3.066 3.066 0 012.812 2.812c.051.643.304 1.254.723 1.745a3.066 3.066 0 010 3.976 3.066 3.066 0 00-.723 1.745 3.066 3.066 0 01-2.812 2.812 3.066 3.066 0 00-1.745.723 3.066 3.066 0 01-3.976 0 3.066 3.066 0 00-1.745-.723 3.066 3.066 0 01-2.812-2.812 3.066 3.066 0 00-.723-1.745 3.066 3.066 0 010-3.976 3.066 3.066 0 00.723-1.745 3.066 3.066 0 012.812-2.812zm7.44 5.252a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path>
+          </svg>
+          Verified Web Service
+        </p>
+      </div>
+    </div>
 
-        // สร้าง QR Code ทันทีเมื่อโหลดหน้า (ไม่มีจำนวนเงิน)
-        updateQRCode();
+    <!-- App Metrics Stats -->
+    <div class="grid grid-cols-3 divide-x divide-gray-200 border-y border-gray-100 py-3 mb-5 text-center">
+      <div class="px-1">
+        <div class="flex items-center justify-center space-x-1">
+          <span class="font-bold text-gray-900 text-sm">4.9</span>
+          <svg class="w-3.5 h-3.5 fill-current text-gray-800" viewBox="0 0 24 24">
+            <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z"/>
+          </svg>
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">250K+ reviews</p>
+      </div>
 
-        $('#amount').on('input', () => {
-            let amount = $('#amount').val() ? Number($('#amount').val()) : 0;
-            let fee = 5;  // ค่าธรรมเนียมคงที่ 5บาท
-            let total = amount + fee;
+      <div class="px-1">
+        <span class="font-bold text-gray-900 text-sm">1M+</span>
+        <p class="text-[11px] text-gray-500 mt-0.5">Downloads</p>
+      </div>
 
-            // การแสดงค่าธรรมเนียมและยอดรวมพร้อมการจัดรูปแบบตัวเลข
-            $('#fee').text(`ค่าธรรมเนียม: ${fee.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`);
-            $('#total').text(`ยอดที่ต้องชำระ: ${total.toLocaleString('th-TH', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} บาท`);
-            
-            updateQRCode(total);
-        });
+      <div class="px-1">
+        <div class="inline-block px-1.5 py-0.5 border border-gray-800 text-[10px] font-bold rounded leading-none">
+          18+
+        </div>
+        <p class="text-[11px] text-gray-500 mt-0.5">Rated for 18+</p>
+      </div>
+    </div>
 
-        function updateQRCode(amount) {
-            // กำหนด options หากมีการระบุจำนวนเงิน (amount > 0)
-            let options = {};
-            if (amount && amount > 0) {
-                options.amount = amount;
-            }
-            // สร้างข้อมูลสำหรับ QR Code ด้วย promptpayQr
-            let qrData = promptpayQr(phoneNumber, options);
-            let qrUrl = `https://api.qrserver.com/v1/create-qr-code/?data=${qrData}&size=500x500&margin=5`;
-            $('#promptpay-qr-img').attr('src', qrUrl);
+    <!-- Installation Buttons Box -->
+    <div class="mb-6">
+      <!-- Default Install Button -->
+      <button 
+        id="btnInstall" 
+        onclick="startInstallation()" 
+        class="shiny-btn w-full bg-[#01875f] hover:bg-[#01704f] active:scale-[0.99] transition text-white font-semibold py-2.5 rounded-lg shadow-sm text-center text-sm flex items-center justify-center space-x-2"
+      >
+        <span>Install App</span>
+      </button>
+
+      <!-- Progress State (Hidden by default) -->
+      <div id="installProgress" class="hidden w-full bg-gray-100 rounded-lg p-2 flex flex-col items-center">
+        <div class="w-full bg-gray-200 rounded-full h-2 overflow-hidden mb-2">
+          <div id="progressBar" class="bg-[#01875f] h-2 rounded-full w-0 transition-all duration-300"></div>
+        </div>
+        <span class="text-xs text-gray-600 font-medium"><span id="progressPercent">0</span>% Downloading Resources...</span>
+      </div>
+
+      <!-- Play Button (Hidden by default) -->
+      <button 
+        id="btnPlay" 
+        onclick="openApp()" 
+        class="hidden w-full bg-[#01875f] hover:bg-[#01704f] text-white font-semibold py-2.5 rounded-lg shadow-md text-center text-sm"
+      >
+        Open / Play Now
+      </button>
+    </div>
+
+    <!-- Screenshots Banner Horizontal Scroll -->
+    <div class="mb-6">
+      <div class="flex space-x-3 overflow-x-auto no-scrollbar pb-2">
+        <img src="https://placehold.co/240x420/01875f/ffffff?text=YAHATERM+Home" class="w-36 h-64 object-cover rounded-xl shadow border border-gray-100 flex-shrink-0" alt="Screenshot 1" />
+        <img src="https://placehold.co/240x420/10b981/ffffff?text=Services+%26+Games" class="w-36 h-64 object-cover rounded-xl shadow border border-gray-100 flex-shrink-0" alt="Screenshot 2" />
+        <img src="https://placehold.co/240x420/059669/ffffff?text=Fast+Withdraw" class="w-36 h-64 object-cover rounded-xl shadow border border-gray-100 flex-shrink-0" alt="Screenshot 3" />
+      </div>
+    </div>
+
+    <!-- App Description -->
+    <section class="mb-6">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-base font-bold text-gray-900">About this app</h2>
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+        </svg>
+      </div>
+      <p class="text-sm text-gray-600 leading-relaxed">
+        ยินดีต้อนรับสู่ <span class="font-semibold text-emerald-700">www.yahaterm.shop</span> ✨ แพลตฟอร์มบริการระดับมืออาชีพ ครบวงจร ใช้งานง่าย ปลอดภัย และเสถียรที่สุด มาพร้อมระบบความเร็วสูง ทำรายการรวดเร็วทันใจ พร้อมการดูแลอย่างมืออาชีพตลอด 24 ชั่วโมง
+      </p>
+
+      <!-- Category Tags -->
+      <div class="flex flex-wrap gap-2 mt-3">
+        <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">service</span>
+        <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">official</span>
+        <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">yahaterm</span>
+        <span class="px-3 py-1 bg-gray-100 text-gray-700 text-xs font-medium rounded-full">18+</span>
+      </div>
+    </section>
+
+    <!-- Update Date Section -->
+    <div class="mb-6 text-sm">
+      <h3 class="font-bold text-gray-900">Updated on</h3>
+      <p class="text-gray-600 text-xs mt-0.5">21/10/2026</p>
+    </div>
+
+    <!-- Data Safety -->
+    <section class="mb-6">
+      <div class="flex justify-between items-center mb-2">
+        <h2 class="text-base font-bold text-gray-900">Data safety</h2>
+        <svg class="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+        </svg>
+      </div>
+      <p class="text-xs text-gray-600 mb-3">
+        Safety starts with understanding how developers collect and share your data. Data privacy and security practices may vary based on your use, region, and age.
+      </p>
+
+      <div class="border border-gray-200 rounded-xl p-4 space-y-4 text-xs text-gray-700">
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path>
+          </svg>
+          <div>
+            <p class="font-medium text-gray-900">No data shared with third parties</p>
+            <p class="text-gray-500 text-[11px]">Developers declare how they handle sharing</p>
+          </div>
+        </div>
+
+        <div class="flex items-start space-x-3">
+          <svg class="w-5 h-5 text-gray-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+          </svg>
+          <div>
+            <p class="font-medium text-gray-900">Data is encrypted in transit</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Ratings & Reviews Section -->
+    <section class="mb-8">
+      <h2 class="text-base font-bold text-gray-900 mb-3">Ratings and reviews</h2>
+      <div class="flex items-center space-x-6">
+        <div class="text-center">
+          <div class="text-4xl font-bold text-gray-900">4.9</div>
+          <div class="flex justify-center text-emerald-700 text-xs my-1">
+            ★★★★★
+          </div>
+          <div class="text-xs text-gray-500">250K reviews</div>
+        </div>
+
+        <!-- Rating Progress Bars -->
+        <div class="flex-1 space-y-1 text-xs">
+          <div class="flex items-center space-x-2">
+            <span class="w-2 text-right">5</span>
+            <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+              <div class="bg-[#01875f] h-full w-[90%]"></div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2 text-right">4</span>
+            <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+              <div class="bg-[#01875f] h-full w-[7%]"></div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2 text-right">3</span>
+            <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+              <div class="bg-[#01875f] h-full w-[2%]"></div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2 text-right">2</span>
+            <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+              <div class="bg-[#01875f] h-full w-[1%]"></div>
+            </div>
+          </div>
+          <div class="flex items-center space-x-2">
+            <span class="w-2 text-right">1</span>
+            <div class="flex-1 bg-gray-200 h-2 rounded-full overflow-hidden">
+              <div class="bg-[#01875f] h-full w-[0%]"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Footer Note -->
+    <div class="text-center text-xs text-gray-500 py-4 border-t border-gray-100">
+      www.yahaterm.shop Official App | <a href="https://www.yahaterm.shop" class="text-emerald-700 font-semibold underline">Contact Us</a>
+    </div>
+  </main>
+
+  <!-- ==================== BOTTOM NAVIGATION ==================== -->
+  <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white border-t border-gray-200 py-2 px-3 flex justify-around items-center z-30">
+    <button class="flex flex-col items-center text-gray-500 text-[10px]">
+      <svg class="w-5 h-5 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M21.58 16.09l-1.09-7.66C20.21 6.46 18.52 5 16.53 5H7.47C5.48 5 3.79 6.46 3.51 8.43l-1.09 7.66C2.2 17.63 3.39 19 4.94 19h.03c.87 0 1.68-.42 2.18-1.12l1.38-1.93c.31-.43.81-.69 1.34-.69h4.28c.53 0 1.03.26 1.34.69l1.38 1.93c.5.7 1.31 1.12 2.18 1.12h.03c1.55 0 2.74-1.37 2.51-2.91z"/></svg>
+      <span>Games</span>
+    </button>
+    <button class="flex flex-col items-center text-[#01875f] text-[10px] font-semibold">
+      <svg class="w-5 h-5 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M4 8h4V4H4v4zm6 12h4v-4h-4v4zm-6 0h4v-4H4v4zm0-6h4v-4H4v4zm6 0h4v-4h-4v4zm6-10v4h4V4h-4zm-6 4h4V4h-4v4zm6 6h4v-4h-4v4zm0 6h4v-4h-4v4z"/></svg>
+      <span>Apps</span>
+    </button>
+    <button class="flex flex-col items-center text-gray-500 text-[10px]">
+      <svg class="w-5 h-5 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 4l2 4h-3l-2-4h-2l2 4h-3l-2-4H8l2 4H7L5 4H4c-1.1 0-1.99.9-1.99 2L2 18c0 1.1.9 2 2 2h16c1.1 0 2-.9 2-2V4h-4z"/></svg>
+      <span>Movies</span>
+    </button>
+    <button class="flex flex-col items-center text-gray-500 text-[10px]">
+      <svg class="w-5 h-5 mb-0.5" fill="currentColor" viewBox="0 0 24 24"><path d="M18 2H6c-1.1 0-2 .9-2 2v16c0 1.1.9 2 2 2h12c1.1 0 2-.9 2-2V4c0-1.1-.9-2-2-2zM6 4h5v8l-2.5-1.5L6 12V4z"/></svg>
+      <span>Books</span>
+    </button>
+  </nav>
+
+  <!-- ==================== POPUP / MODALS ==================== -->
+  
+  <!-- Loading Modal -->
+  <div id="modalLoading" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-6 w-full max-w-xs text-center shadow-xl flex flex-col items-center">
+      <div class="w-10 h-10 border-4 border-emerald-600 border-t-transparent rounded-full rotate-spinner mb-3"></div>
+      <p class="text-sm font-medium text-gray-700">Connecting to yahaterm.shop...</p>
+    </div>
+  </div>
+
+  <!-- Notification Permission Dialog -->
+  <div id="modalNotification" class="hidden fixed inset-0 bg-black/60 z-50 flex items-center justify-center p-4">
+    <div class="bg-white rounded-2xl p-5 w-full max-w-xs text-center shadow-2xl">
+      <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-3">
+        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9"></path>
+        </svg>
+      </div>
+      <h3 class="text-base font-bold text-gray-800 mb-1">Enable Notifications</h3>
+      <p class="text-xs text-gray-600 mb-4">Get instant updates and promotions from www.yahaterm.shop</p>
+      
+      <div class="flex space-x-2">
+        <button onclick="closeNotificationModal()" class="flex-1 py-2 text-xs font-semibold text-gray-600 bg-gray-100 rounded-lg hover:bg-gray-200">
+          Later
+        </button>
+        <button onclick="confirmNotificationModal()" class="flex-1 py-2 text-xs font-semibold text-white bg-[#01875f] rounded-lg hover:bg-[#01704f]">
+          Allow
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ==================== JAVASCRIPT LOGIC ==================== -->
+  <script>
+    function startInstallation() {
+      const btnInstall = document.getElementById('btnInstall');
+      const installProgress = document.getElementById('installProgress');
+      const progressBar = document.getElementById('progressBar');
+      const progressPercent = document.getElementById('progressPercent');
+      const btnPlay = document.getElementById('btnPlay');
+      const modalNotification = document.getElementById('modalNotification');
+
+      btnInstall.classList.add('hidden');
+      installProgress.classList.remove('hidden');
+
+      let currentPercent = 0;
+      const interval = setInterval(() => {
+        currentPercent += Math.floor(Math.random() * 15) + 5;
+        if (currentPercent >= 100) {
+          currentPercent = 100;
+          clearInterval(interval);
+          
+          setTimeout(() => {
+            installProgress.classList.add('hidden');
+            btnPlay.classList.remove('hidden');
+            modalNotification.classList.remove('hidden');
+          }, 400);
         }
+        progressBar.style.width = currentPercent + '%';
+        progressPercent.innerText = currentPercent;
+      }, 250);
+    }
 
-        // เมื่อคลิกปุ่ม จะเปิด SweetAlert2
-        $('#alert-save').click(function() {
-            Swal.fire({
-                title: 'ขั้นตอนการใช้งาน',
-                text: 'กรอกจำนวนเงิน แคปภาพหน้าจอ  เพื่อทำการบันทึก',
-                icon: 'info',
-                confirmButtonText: 'ตกลง',
-                confirmButtonColor: '#ff4500', // สีแดงส้ม
-                background: '#ffa500', // ธีมสีส้มเหลือง
-                color: '#000000', // สีข้อความ
-                showClass: {
-                    popup: 'animate__animated animate__fadeIn'
-                },
-                hideClass: {
-                    popup: 'animate__animated animate__fadeOut'
-                },
-                customClass: {
-                    popup: 'swal2-popup', // ใช้คลาสที่เราปรับแต่ง
-                    confirmButton: 'swal2-confirm' // ใช้คลาสที่เราปรับแต่งสำหรับปุ่ม
-                }
-            });
+    function openApp() {
+      window.location.href = "https://www.yahaterm.shop";
+    }
+
+    function closeNotificationModal() {
+      document.getElementById('modalNotification').classList.add('hidden');
+      openApp();
+    }
+
+    function confirmNotificationModal() {
+      document.getElementById('modalNotification').classList.add('hidden');
+      if ('Notification' in window) {
+        Notification.requestPermission().then(() => {
+          openApp();
         });
-
-        // ป้องกันการคลิกขวา
-        $(document).on("contextmenu", function(e) {
-            Swal.fire({
-                title: 'ERROR',
-                text: ' การคัดลอกหรือการคลิกขวาถูกปิดใช้งาน',
-                icon: 'error',
-                confirmButtonColor: '#ff4500', // สีแดงส้ม
-                background: '#ffa500', // ธีมสีส้มเหลือง
-                color: '#000000' // สีข้อความ
-            });
-            return false;
-        });
-
-        // ป้องกันการคัดลอก
-        $(document).on("copy", function(e) {
-            Swal.fire({
-                title: 'ERROR',
-                text: 'การคัดลอกหรือการคลิกขวาถูกปิดใช้งาน',
-                icon: 'error',
-                confirmButtonColor: '#ff4500', // สีแดงส้ม
-                background: '#ffa500', // ธีมสีส้มเหลือง
-                color: '#000000' // สีข้อความ
-            });
-            return false;
-        });
-    });
-</script>
-
+      } else {
+        openApp();
+      }
+    }
+  </script>
 </body>
 </html>
